@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import AuthorImage from "../../images/author_thumbnail.jpg";
-import nftImage from "../../images/nftImage.jpg";
 import axios from "axios";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-
+import SkeletonLoader from "../UI/skeletonLoader";
+import useSlidesToShow from "./useSlidesToShow"
 
 
 const HotCollections = () => {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const slidesToShow = useSlidesToShow;
   
   useEffect(() => {
     const fetchData = async () => {
@@ -21,6 +22,7 @@ const HotCollections = () => {
           'https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections'
         );
         setData(response.data);
+        setLoading(false);
       } catch (error){
         console.error("Error fetching data:", error);
       }
@@ -76,39 +78,47 @@ const HotCollections = () => {
           <div className="col-lg-12">
             <div className="text-center">
               <h2>Hot Collections</h2>
-
-              <div className="slider-container">
-                <Slider {...settings}>
-                  {data.map((nft, index) => 
-                    <div key={index} className="px-2">
-                      <div className="nft_coll">
-                        <div className="nft_wrap">
-                          <Link to= {`/item-details/${nft.nftID}`}>
-                            <img src={nft.nftImage}
-                            className="lazy img-fluid"
-                            alt={nft.title}/>
+              
+              <div className="col-lg-12">
+                {loading ? (
+                  <SkeletonLoader
+                    count={slidesToShow}
+                    type="hotCollections"
+                    settings={settings}/>
+                ) : (
+                <div className="slider-container">
+                  <Slider {...settings}>
+                    {data.map((nft, index) => 
+                      <div key={index} className="px-2">
+                        <div className="nft_coll">
+                          <div className="nft_wrap">
+                            <Link to= {`/item-details/${nft.nftID}`}>
+                              <img src={nft.nftImage}
+                              className="lazy img-fluid"
+                              alt={nft.title}/>
+                            </Link>
+                          </div>
+                        <div className="nft_coll_pp">
+                          <Link to={`/author/${nft.authorId}`}>
+                            <img className="lazy pp-coll"
+                              src={nft.authorImage}
+                              alt={`${nft.title} author`} />
                           </Link>
+                          <i className="fa fa-check"></i>
                         </div>
-                      <div className="nft_coll_pp">
-                        <Link to={`/author/${nft.authorId}`}>
-                          <img className="lazy pp-coll"
-                            src={nft.authorImage}
-                            alt={`${nft.title} author`} />
-                        </Link>
-                        <i className="fa fa-check"></i>
+                        <div className="nft_coll_info">
+                          <Link to="/explore">
+                            <h3>{nft.title}</h3>
+                          </Link>
+                          <span>ERC-{nft.code}</span>
+                        </div>
+                        </div>
                       </div>
-                      <div className="nft_coll_info">
-                        <Link to="/explore">
-                          <h3>{nft.title}</h3>
-                        </Link>
-                        <span>ERC-{nft.code}</span>
-                      </div>
-                      </div>
-                    </div>
-                  )}
+                    )}
 
-                </Slider>
-
+                  </Slider>
+                </div>
+                )}
               </div>
             </div>
           </div>
