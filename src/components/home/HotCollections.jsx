@@ -1,5 +1,4 @@
-
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from 'react'
 import { Link } from "react-router-dom";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -10,7 +9,7 @@ import AOS from "aos";
 import "aos/dist/aos.css";
 import useSlidesToShow from "./useSlidesToShow";
 import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
-import SkeletonLoader from "../UI/skeletonLoader";
+import SkeletonLoader from "../UI/SkeletonLoader";
 
 const HotCollections = () => {
   const [data, setData] = useState([]);
