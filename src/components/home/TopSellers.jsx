@@ -25,18 +25,6 @@ const TopSellers = () => {
     fetchData();
   }, []);
 
-  const NextArrow = ({ onClick }) => (
-    <div className="arrow next" onClick={onClick}>
-      <FaChevronRight />
-    </div>
-  );
-
-  const PrevArrow = ({ onClick }) => (
-    <div className="arrow prev" onClick={onClick}>
-      <FaChevronLeft />
-    </div>
-  );
-
   return (
     <section id="section-popular" className="pb-5">
       <div className="container">
