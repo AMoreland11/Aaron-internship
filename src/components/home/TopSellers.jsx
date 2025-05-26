@@ -1,39 +1,89 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import AuthorImage from "../../images/author_thumbnail.jpg";
+import axios from "axios";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import SkeletonLoader from "../UI/SkeletonLoader";
+
 
 const TopSellers = () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "https://us-central1-nft-cloud-functions.cloudfunctions.net/topSellers"
+        );
+        setData(response.data);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const NextArrow = ({ onClick }) => (
+    <div className="arrow next" onClick={onClick}>
+      <FaChevronRight />
+    </div>
+  );
+
+  const PrevArrow = ({ onClick }) => (
+    <div className="arrow prev" onClick={onClick}>
+      <FaChevronLeft />
+    </div>
+  );
+
   return (
     <section id="section-popular" className="pb-5">
       <div className="container">
         <div className="row">
           <div className="col-lg-12">
-            <div className="text-center">
+            <div
+              className="text-center"
+              data-aos="fade-in"
+              data-aos-delay="200"
+              data-aos-anchor-placement="top-bottom"
+            >
               <h2>Top Sellers</h2>
               <div className="small-border bg-color-2"></div>
             </div>
           </div>
           <div className="col-md-12">
-            <ol className="author_list">
-              {new Array(12).fill(0).map((_, index) => (
-                <li key={index}>
-                  <div className="author_list_pp">
-                    <Link to="/author">
-                      <img
-                        className="lazy pp-author"
-                        src={AuthorImage}
-                        alt=""
-                      />
-                      <i className="fa fa-check"></i>
-                    </Link>
-                  </div>
-                  <div className="author_list_info">
-                    <Link to="/author">Monica Lucas</Link>
-                    <span>2.1 ETH</span>
-                  </div>
-                </li>
-              ))}
-            </ol>
+            {loading ? (
+              <SkeletonLoader count={12} type="topSellers" />
+            ) : (
+              <ol
+                className="author_list"
+                data-aos="fade-in"
+                data-aos-delay="200"
+                data-aos-anchor-placement="top-bottom"
+              >
+                {data.map((seller) => (
+                  <li key={seller.id}>
+                    <div className="author_list_pp">
+                      <Link tp={`/author/${seller.authorId}`}>
+                        <img
+                          className="lazy pp-author"
+                          src={seller.authorImage}
+                          alt={seller.authorName}
+                        />
+                        <i className="fa fa-check"></i>
+                      </Link>
+                    </div>
+                    <div className="author_list_info">
+                      <Link to={`/author/${seller.authorId}`}>
+                        {seller.authorName}
+                      </Link>
+                      <span>{seller.price} ETH</span>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            )}
           </div>
         </div>
       </div>
