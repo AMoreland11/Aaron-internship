@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import SkeletonLoader from "../UI/SkeletonLoader";
-
+import '../../css/styles/react-slick.css';
 
 const TopSellers = () => {
   const [data, setData] = useState([]);
@@ -42,7 +41,7 @@ const TopSellers = () => {
           </div>
           <div className="col-md-12">
             {loading ? (
-              <SkeletonLoader count={12} type="topSellers" />
+              <SkeletonLoader count={12} type="topsellers" />
             ) : (
               <ol
                 className="author_list"
@@ -53,7 +52,7 @@ const TopSellers = () => {
                 {data.map((seller) => (
                   <li key={seller.id}>
                     <div className="author_list_pp">
-                      <Link tp={`/author/${seller.authorId}`}>
+                      <Link to={`/author/${seller.authorId}`}>
                         <img
                           className="lazy pp-author"
                           src={seller.authorImage}
