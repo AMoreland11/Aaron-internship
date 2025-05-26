@@ -1,19 +1,92 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AuthorImage from "../../images/author_thumbnail.jpg";
 import nftImage from "../../images/nftImage.jpg";
+import axios from "axios";
+import AOS from "aos";
+import SkeletonLoader from "../UI/SkeletonLoader";
+import CountdownTimer from "../UI/CountdownTimer";
 
 const ExploreItems = () => {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState("");
+  const [visibleItems, setVisibleItems] = useState(8);
+
+  const fetchItems = async (filter = "") => {
+    setLoading(true);
+    try {
+      const response = await axios.get(
+        `https://us-central1-nft-cloud-functions.cloudfunctions.net/explore${
+          filter ? `?filter=${filter}` : ""
+        }`
+      );
+      setVisibleItems(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchItems(filter);
+    AOS.init({
+      once: true,
+    });
+  }, [filter]);
+
+  const handleLoadMore = () => {
+    setVisibleItems((prevVisibleItems) => prevVisibleItems + 4);
+  };
+
+  const hasMoreItems = visibleItems < items.length;
+
   return (
     <>
-      <div>
-        <select id="filter-items" defaultValue="">
+      <div data-aos="fade-in" data-aos-duration="2000">
+        <select
+          id="filter-items"
+          defaultValue=""
+          onChange={(e) => setFilter(e.target.value)}
+        >
           <option value="">Default</option>
           <option value="price_low_to_high">Price, Low to High</option>
           <option value="price_high_to_low">Price, High to Low</option>
           <option value="likes_high_to_low">Most liked</option>
         </select>
       </div>
+      {loading ? (
+        <SkeletonLoader count={8} type="exploreItems" />
+      ) : (
+        items.slice(0, visibleItems).map((item, index) => (
+          <div
+            data-aos="fade-in"
+            data-aos-duration="2000"
+            key={index}
+            className="d-item col-lg-3 col-md-6 col-sm-6 col-xs-12"
+            style={{ display: "block", backgroundSize: "cover" }}
+          >
+            <div className="nft__item">
+              <div className="author_list_pp">
+                <Link
+                  t={`/author/${item.authorId}`}
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title={`Creator: ${item.authorName}`}
+                >
+                  <img
+                    className="lazy"
+                    src={item.authorImage}
+                    alt={item.authorName}
+                  />
+                </Link>
+              </div>
+              <CountdownTimer expiryDate={item.expiryDate} />
+            </div>
+          </div>
+        ))
+      )}
       {new Array(8).fill(0).map((_, index) => (
         <div
           key={index}
