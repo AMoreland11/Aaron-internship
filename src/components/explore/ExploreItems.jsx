@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import AuthorImage from "../../images/author_thumbnail.jpg";
-import nftImage from "../../images/nftImage.jpg";
 import axios from "axios";
-import AOS from "aos";
+import AOS from 'aos';
 import SkeletonLoader from "../UI/SkeletonLoader";
-import CountdownTimer from "../UI/CountdownTimer";
+import CountdownTimer from '../UI/CountdownTimer';
 
 const ExploreItems = () => {
   const [items, setItems] = useState([]);
