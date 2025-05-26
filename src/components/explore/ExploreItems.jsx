@@ -21,7 +21,7 @@ const ExploreItems = () => {
           filter ? `?filter=${filter}` : ""
         }`
       );
-      setVisibleItems(response.data);
+      setItems(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
